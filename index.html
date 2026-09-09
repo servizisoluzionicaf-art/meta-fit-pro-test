@@ -1,1 +1,32 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=MFP_HOME1_ATTIVA_SPOT_STRAPPO.html"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meta Fit Pro</title></head><body><a href="MFP_HOME1_ATTIVA_SPOT_STRAPPO.html">Apri Meta Fit Pro</a></body></html>
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Meta Fit Pro</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#031118}
+#home1{position:fixed;inset:0;width:100vw;height:100vh;border:0;display:block;background:#031118}
+</style>
+</head>
+<body>
+<iframe id="home1" src="MFP_HOME1_ATTIVA_SPOT_STRAPPO.html" title="Meta Fit Pro Home 1" allow="autoplay; fullscreen"></iframe>
+<script>
+(function(){
+ const f=document.getElementById('home1');
+ function fit(){
+  try{
+   const d=f.contentDocument,w=f.contentWindow;
+   if(!d)return;
+   d.documentElement.style.cssText+=';margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#031118!important';
+   d.body.style.cssText+=';margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important;display:block!important;background:#031118!important';
+   const h=d.querySelector('.home');
+   if(h){h.style.setProperty('width','100vw','important');h.style.setProperty('max-width','none','important');h.style.setProperty('height','100vh','important');h.style.setProperty('aspect-ratio','auto','important');h.style.setProperty('margin','0','important');}
+  }catch(e){}
+ }
+ f.addEventListener('load',fit);
+ window.addEventListener('resize',fit);
+})();
+</script>
+</body>
+</html>
