@@ -48,6 +48,10 @@
   $('mfp-visit').addEventListener('click',()=>openLinked('home4'));
 
   const body=document.querySelector('.body'),base=body.querySelector('img');
+  const coaches=document.createElement('section');coaches.className='mfp-home2-coaches';coaches.setAttribute('aria-label','I coach Meta Fit Pro: Alessandro e Isabella');
+  const coachCard=(name,className,src,alt)=>{const figure=document.createElement('figure');figure.className='mfp-home2-coach '+className;const img=document.createElement('img');img.src=src;img.alt=alt;const caption=document.createElement('figcaption');caption.className='mfp-home2-coach-name';caption.textContent=name;figure.append(img,caption);return figure;};
+  coaches.append(coachCard('ALESSANDRO','alessandro','assets/home2/alessandro-home2.jpg','Alessandro, coach Meta Fit Pro'),coachCard('ISABELLA','isabella','assets/home2/isabella-uniforme.webp','Isabella, coach Meta Fit Pro con divisa nera e verde lime'));
+  body.append(coaches);
   const entry=document.createElement('dialog');entry.id='mfp-entry';entry.setAttribute('aria-label','Ingresso nella stanza Meta Fit Pro');
   entry.innerHTML='<div class="mfp-entry-stage"><div class="mfp-entry-camera"></div><section class="mfp-arrival" hidden aria-labelledby="mfp-arrival-title"><img alt=""><div class="mfp-arrival-light" aria-hidden="true"></div><div class="mfp-arrival-label"><p>META FIT PRO · LA TUA STANZA</p><h2 id="mfp-arrival-title"></h2></div></section><div class="mfp-entry-wash" aria-hidden="true"></div></div><button class="mfp-entry-return" type="button">← TORNA ALLA HOME 2</button><p class="mfp-entry-status" role="status" aria-live="polite"></p>';
   document.body.append(entry);
@@ -101,11 +105,13 @@
       portal.append(glow,light,leaf);
       const copyBody=copy.querySelector('.body');
       for(const className of ['mfp-light-halo','mfp-light-air','mfp-light-floor']){const spill=document.createElement('div');spill.className=className;spill.setAttribute('aria-hidden','true');copyBody.append(spill);}
-      copyBody.append(portal);
+      const isabella=document.createElement('img');isabella.className='mfp-entry-isabella';isabella.src='assets/home2/isabella-apre-porta.webp';isabella.alt='';
+      copyBody.append(portal,isabella);
+      if(isabella.decode)await isabella.decode().catch(()=>{});
       $('mfp-arrival-title').textContent=room.name;
       entry.dataset.phase='opening';entryStatus.textContent='LA PORTA SI APRE';
       document.body.classList.add('mfp-entering');entry.showModal();
-      await entryWait(50,signal);portal.classList.add('open');copyBody.classList.add('mfp-light-on');
+      await entryWait(50,signal);isabella.classList.add('active');portal.classList.add('open');copyBody.classList.add('mfp-light-on');
       await entryWait(reduced?400:2350,signal);
       entryStatus.textContent='PORTA APERTA';
       if(!reduced){
@@ -131,7 +137,6 @@
     }finally{if(!entry.open)doorRunning=false;}
   }
 
-  $('mfp-preview').addEventListener('click',()=>animateDoor(true));
   $('mfp-reset').addEventListener('click',()=>show($('mfp-reset-dialog')));
   $('mfp-confirm-reset').addEventListener('click',()=>{closeDoor();state=MFP.fresh();MFP.clear();$('mfp-profile-form').reset();render();$('mfp-reset-dialog').close();});
   const hotspots=[

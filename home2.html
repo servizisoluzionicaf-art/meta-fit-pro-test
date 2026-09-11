@@ -61,10 +61,20 @@ body{padding-bottom:var(--mfp-controls-height,210px)}
 .mfp-door-leaf{position:absolute;inset:0;background-repeat:no-repeat;background-size:527.07% 194.38%;background-position:68.66% 19.44%;transform-origin:left;backface-visibility:hidden;transition:transform 1.15s ease-in-out;box-shadow:0 0 10px #0008}
 .mfp-door.open .mfp-door-leaf{transform:rotateY(-86deg)}
 .mfp-door-caption{position:absolute;left:0;right:0;bottom:4%;margin:0;padding:8px 4px;background:#050905e8;color:var(--mfp-lime);font:700 clamp(8px,1.2vw,17px)/1.3 Arial,sans-serif;text-align:center}
+.mfp-home2-coaches{position:absolute;z-index:12;left:74.965%;top:1.35%;width:23.61%;height:29.15%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;background:radial-gradient(circle at 50% 15%,#183322,#070b09 70%);border:1px solid #263a2d;box-shadow:inset 0 0 30px #0009,0 0 18px #0008}
+.mfp-home2-coach{position:relative;min-width:0;margin:0;overflow:hidden}
+.mfp-home2-coach+.mfp-home2-coach{border-left:1px solid #5b7b42}
+.body .mfp-home2-coach img{position:absolute;display:block;max-width:none}
+.body .mfp-home2-coach.alessandro img{inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.body .mfp-home2-coach.isabella img{left:-1%;top:-2%;width:auto;height:105%;object-fit:contain;object-position:left bottom}
+.mfp-home2-coach-name{position:absolute;z-index:2;left:0;right:0;bottom:0;margin:0;padding:5px 3px;background:linear-gradient(transparent,#030604 38%,#030604e8);color:#dfff8d;font:900 clamp(7px,.72vw,11px)/1.2 Arial,sans-serif;letter-spacing:.7px;text-align:center;text-shadow:0 1px 2px #000}
+.body .mfp-entry-isabella{position:absolute;z-index:4;left:71.8%;top:7.2%;display:block;width:15%;height:55%;max-width:none;object-fit:contain;object-position:left bottom;opacity:0;transform:translateX(8%) scale(.96);transform-origin:center bottom;filter:drop-shadow(0 10px 12px #000a);pointer-events:none}
+.mfp-entry-isabella.active{animation:mfp-isabella-opens 2.35s ease both}
+@keyframes mfp-isabella-opens{0%{opacity:0;transform:translateX(12%) scale(.96)}10%{opacity:1;transform:translateX(4%) scale(1)}76%{opacity:1;transform:translateX(0) scale(1)}100%{opacity:0;transform:translateX(-2%) scale(1)}}
 .mfp-hotspot{position:absolute;background:transparent;border:0;padding:0;cursor:pointer;border-radius:8px}
 .mfp-hotspot:focus-visible{outline:3px solid var(--mfp-lime);outline-offset:2px;background:#b7ff2a22}
 @media(max-width:700px){body{padding-bottom:0}#mfp-controls{position:relative;left:auto;bottom:auto;transform:none;width:calc(100% - 16px);margin:14px auto 10px;padding:12px 10px;border-radius:20px}.mfp-row{gap:8px}.mfp-row .mfp-button{flex:1 1 140px;font-size:.875rem;padding:9px 10px}.mfp-room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mfp-dialog{padding:20px}.mfp-link-dialog{padding:0}.mfp-link-toolbar{padding:8px}.mfp-link-toolbar .mfp-button{font-size:.8125rem;padding:8px 12px}}
-@media(prefers-reduced-motion:reduce){.mfp-door-leaf{transition:none}*{scroll-behavior:auto!important}}
+@media(prefers-reduced-motion:reduce){.mfp-door-leaf{transition:none}.mfp-entry-isabella.active{animation:none;opacity:1}*{scroll-behavior:auto!important}}
 
 </style>
 <link rel="stylesheet" href="assets/mfp-approved/entry.css"></head>
@@ -94,7 +104,6 @@ body{padding-bottom:var(--mfp-controls-height,210px)}
 
   </div>
   <div class="mfp-row">
-    <button class="mfp-button" id="mfp-preview" type="button">ANTEPRIMA INGRESSO NELLA LUCE</button>
     <button class="mfp-button" id="mfp-visit" type="button">VISITA LE STANZE</button>
     <button class="mfp-button" id="mfp-reset" type="button">AZZERA PROVA</button>
   </div>
