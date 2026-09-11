@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Meta Fit Pro · Il tuo account</title>
+  <link rel="stylesheet" href="assets/mfp-account/account.css">
+</head>
+<body>
+  <header><a href="home2.html">← HOME 2</a><a class="brand" href="home2.html">META <em>FIT</em> PRO</a></header>
+  <main>
+    <p class="eyebrow">IL TUO PERCORSO INIZIA QUI</p>
+    <h1>Il tuo account.</h1>
+    <p id="account-status" role="status" aria-live="polite">Verifica del servizio in corso…</p>
+    <section id="auth-panel" hidden aria-label="Accesso e registrazione">
+      <div class="tabs"><button id="show-login" type="button" aria-pressed="true">Accedi</button><button id="show-register" type="button" aria-pressed="false">Registrati</button></div>
+      <form id="login-form">
+        <label>Email<input name="email" type="email" autocomplete="username" maxlength="254" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" maxlength="128" required></label>
+        <button type="submit" class="primary">ACCEDI</button>
+        <button id="forgot-password" type="button" class="text-button">Hai dimenticato la password?</button>
+        <button id="resend-email" type="button" class="text-button">Invia di nuovo l’email di conferma</button>
+      </form>
+      <form id="register-form" hidden>
+        <div class="columns">
+          <label>Nome<input name="first_name" autocomplete="given-name" maxlength="80" required></label>
+          <label>Cognome<input name="last_name" autocomplete="family-name" maxlength="80" required></label>
+        </div>
+        <label>Telefono<input name="phone" type="tel" autocomplete="tel" minlength="6" maxlength="30" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="password-help" required></label>
+        <p id="password-help" class="muted">Usa almeno 12 caratteri. Riceverai un’email per confermare l’account.</p>
+        <button id="register-privacy" type="button" class="text-button">Leggi l’informativa privacy</button>
+        <button id="register-submit" type="submit" class="primary" disabled>CREA IL TUO ACCOUNT</button>
+      </form>
+    </section>
+    <section id="member-panel" hidden aria-label="Il tuo percorso">
+      <h2 id="welcome"></h2>
+      <p id="membership"></p>
+      <section id="consent-panel" hidden>
+        <h2>Prima di continuare</h2>
+        <p>Apri i documenti e conferma le tue scelte.</p>
+        <form id="consent-form"><div id="consent-list"></div><button id="save-consents" class="primary" type="submit" disabled>CONFERMA E CONTINUA</button></form>
+      </section>
+      <a id="continue-account" class="primary button" href="home3.html" hidden>CONTINUA AL PAGAMENTO →</a>
+      <button id="manage-billing" type="button" hidden>Gestisci abbonamento e fatture</button>
+      <button id="sign-out" type="button" class="text-button">Esci dall’account</button>
+    </section>
+    <form id="recovery-form" hidden>
+      <label>Nuova password<input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+      <button type="submit" class="primary">SALVA LA NUOVA PASSWORD</button>
+    </form>
+  </main>
+  <dialog id="document-dialog" aria-labelledby="document-title">
+    <button id="close-document" type="button" aria-label="Chiudi documento">Chiudi ×</button>
+    <h2 id="document-title"></h2><p id="document-version" class="muted"></p><div id="document-body"></div>
+  </dialog>
+  <script src="assets/mfp-approved/flow.js"></script><script type="module" src="assets/mfp-account/account.js"></script>
+</body>
+</html>

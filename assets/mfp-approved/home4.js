@@ -1,5 +1,6 @@
-(()=>{
+(async()=>{
   'use strict';
+  await MFP.ready;
   const $=id=>document.getElementById(id);
   const rooms=JSON.parse($('mfp-room-data').textContent);
   const embedded=window.parent!==window;
@@ -40,6 +41,7 @@
     $('selection-status').textContent=selected?'Stanza selezionata: '+rooms.find(room=>room.id===selected)?.name+'.':canSelect?'Scegli una stanza disponibile.':'Puoi esplorare le stanze. Completa pagamento e profilo nella Home 2 per selezionarle.';
   }
   window.addEventListener('message',event=>{
+    if(MFP.real)return;
     if(!embedded||event.source!==parent||event.data?.type!=='mfp-room-selector-init')return;
     completedWeeks=cleanWeeks(event.data.completedWeeks);canSelect=event.data.canSelect===true;
     selected=rooms.some(room=>room.id===event.data.selected&&available(room))?event.data.selected:null;
@@ -52,6 +54,13 @@
   video.addEventListener('play',updateToggle);video.addEventListener('pause',updateToggle);
   if(reduce){video.autoplay=false;video.pause();}else video.play().catch(updateToggle);
   if(!embedded){try{const saved=JSON.parse(sessionStorage.getItem('mfp.home2.reconstructed.demo.v1')||'null');completedWeeks=cleanWeeks(saved?.completedWeeks);selected=rooms.some(r=>r.id===saved?.room&&available(r))?saved.room:null;}catch{}}
+  function useAccount(){
+    if(!MFP.real)return;
+    const state=MFP.read();completedWeeks=cleanWeeks(state.completedWeeks);canSelect=state.paid&&state.profile;
+    selected=rooms.some(r=>r.id===state.room&&available(r))?state.room:null;
+  }
+  useAccount();
+  window.addEventListener('mfp-state',()=>{useAccount();render();});
   render();updateToggle();
   if(embedded)parent.postMessage({type:'mfp-room-selector-ready'},'*');
 })();
