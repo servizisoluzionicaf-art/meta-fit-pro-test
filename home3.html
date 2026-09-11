@@ -10,7 +10,7 @@
   .step{letter-spacing:.06em}
   .coach-scene{display:contents}
   .scene-shade{display:none}
-  .coach-side{grid-row:2;position:sticky;top:max(78px,calc(50svh - 16vw));bottom:auto;left:auto;right:auto;align-self:start;justify-self:center;width:min(100%,calc((100svh - 100px)*.525));height:auto;aspect-ratio:537.6/1024;z-index:1;opacity:1}
+  .coach-side{grid-row:2;position:relative;top:auto;bottom:auto;left:auto;right:auto;align-self:start;justify-self:center;margin-top:clamp(24px,6vw,52px);width:min(100%,calc((100svh - 100px)*.525));height:auto;aspect-ratio:537.6/1024;z-index:1;opacity:1}
   .coach-left{grid-column:1}
   .coach-right{grid-column:3}
   .coach-side img{position:absolute;top:0;width:285.714286%;height:auto;max-width:none;object-fit:contain}
@@ -38,6 +38,16 @@
   .payment-main{border-radius:18px}
   .eyebrow{font-size:.75rem;letter-spacing:.055em;overflow-wrap:break-word}
   .renewal{font-size:.875rem}
+}
+@media(max-width:640px) and (orientation:portrait){
+  .payment-page{grid-template-columns:minmax(0,1fr) minmax(0,clamp(180px,46vw,260px)) minmax(0,1fr)}
+  .coach-side{width:100%;margin-top:38px}
+  .payment-main{padding-inline:10px}
+  .payment-fields{grid-template-columns:minmax(0,1fr)}
+  .price{white-space:normal}
+  .price small{display:block;margin:4px 0 0}
+  .demo-note{display:block}
+  .demo-note svg{margin:0 0 5px}
 }
 @media(max-width:350px){
   .payment-fields{grid-template-columns:minmax(0,1fr)}
