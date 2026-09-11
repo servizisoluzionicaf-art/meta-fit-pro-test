@@ -1,0 +1,3 @@
+[functions.mfp-api]
+# Il webhook Stripe non ha JWT. Le altre route verificano il JWT con Auth.getUser.
+verify_jwt = false

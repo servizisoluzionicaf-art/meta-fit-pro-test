@@ -1,5 +1,6 @@
-(() => {
+(async () => {
   'use strict';
+  await MFP.ready;
   const $=id=>document.getElementById(id);
   const assets=JSON.parse($('mfp-original-assets').textContent);
   let state=MFP.read(),doorRunning=false;
@@ -9,19 +10,25 @@
   const save=()=>MFP.save(state);
   function render(){
     const pay=$('mfp-payment'),profile=$('mfp-profile'),choose=$('mfp-select-room');
-    pay.textContent=state.paid?'HOME 3 · PAGAMENTO DI PROVA COMPLETATO ✓':'2 · HOME 3 · PAGAMENTO';
+    pay.textContent=state.paid?(MFP.real?'HOME 3 · ABBONAMENTO ATTIVO ✓':'HOME 3 · PAGAMENTO DI PROVA COMPLETATO ✓'):'2 · HOME 3 · PAGAMENTO';
     pay.classList.toggle('is-done',state.paid);pay.classList.toggle('is-next',state.profile&&!state.paid);
-    profile.disabled=false;profile.textContent=state.profile?'1 · REGISTRAZIONE DI PROVA CONFERMATA ✓':'1 · REGISTRAZIONE DI PROVA';
+    profile.disabled=false;profile.textContent=MFP.real?(state.profile?'IL TUO ACCOUNT ✓':'1 · REGISTRATI / ACCEDI'):(state.profile?'1 · REGISTRAZIONE DI PROVA CONFERMATA ✓':'1 · REGISTRAZIONE DI PROVA');
     profile.classList.toggle('is-done',state.profile);profile.classList.toggle('is-next',!state.profile);
     choose.disabled=!(state.paid&&state.profile);choose.classList.toggle('is-next',state.paid&&state.profile);
     choose.textContent=state.room?'CAMBIA STANZA':'3 · SCEGLI STANZA';
     const room=assets.rooms.find(r=>r.id===state.room);
     say(!state.profile?'Inizia dalla registrazione di prova.':!state.paid?'Registrazione confermata. Prosegui al pagamento nella Home 3.':!room?'Scegli la tua stanza nella Home 4: la porta si aprirà automaticamente.':'Stanza selezionata: '+room.name+'. La porta si apre automaticamente dopo ogni scelta.');
+    if(MFP.real){
+      $('mfp-trial').hidden=true;$('mfp-reset').hidden=true;$('mfp-trial').style.display='none';$('mfp-reset').style.display='none';
+      document.querySelector('#mfp-controls .mfp-demo').hidden=true;
+      if(MFP.problem)say(MFP.problem);
+      else if(!state.profile)say('Registrati o accedi al tuo account per iniziare.');
+    }
     document.documentElement.style.setProperty('--mfp-controls-height',($('mfp-controls').offsetHeight+30)+'px');
   }
   const show=dialog=>dialog.showModal();
   document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
-  function showProfile(){show($('mfp-profile-dialog'));}
+  function showProfile(){if(MFP.real){location.href='account.html';return;}show($('mfp-profile-dialog'));}
   function openLinked(kind){
     if(kind==='payment'&&!state.profile){showProfile();return;}
     location.href={home1:'home1-fullscreen.html',payment:'home3.html',home4:'home4.html'}[kind];
@@ -31,10 +38,12 @@
   $('mfp-profile').addEventListener('click',showProfile);
   $('mfp-trial').addEventListener('click',()=>show($('mfp-trial-dialog')));
   $('mfp-confirm-payment').addEventListener('click',()=>{
+    if(MFP.real)return;
     state.paid=true;if(!save()){say('Consenti la memorizzazione in questa scheda per continuare.');return;}
     $('mfp-trial-dialog').close();render();if(!state.profile)showProfile();
   });
   $('mfp-profile-form').addEventListener('submit',e=>{
+    if(MFP.real){e.preventDefault();return;}
     e.preventDefault();const input=e.currentTarget.elements.displayName;
     if(!input.value.trim()){input.setCustomValidity('Inserisci un nome di prova.');input.reportValidity();return;}
     input.setCustomValidity('');if(!e.currentTarget.reportValidity())return;
@@ -59,7 +68,7 @@
   let entryAbort=null,entryFocus=null;
   const cleanEntry=()=>{
     if(entryAbort){entryAbort.abort();entryAbort=null;}
-    doorRunning=false;camera.replaceChildren();camera.removeAttribute('style');camera.hidden=false;arrival.hidden=true;arrival.classList.remove('visible','lit','has-room-page');arrival.querySelector('iframe')?.remove();wash.classList.remove('visible');entry.dataset.phase='idle';document.body.classList.remove('mfp-entering');
+    doorRunning=false;camera.replaceChildren();camera.removeAttribute('style');camera.hidden=false;arrival.hidden=true;arrival.classList.remove('visible','lit','has-room-page');arrival.querySelector('iframe')?.remove();arrival.querySelector('.mfp-private-training')?.remove();wash.classList.remove('visible');entry.dataset.phase='idle';document.body.classList.remove('mfp-entering');
   };
   function closeDoor(){
     cleanEntry();
@@ -81,6 +90,12 @@
     const selected=assets.rooms.find(r=>r.id===state.room);
     if(!preview&&!(state.paid&&state.profile&&roomUnlocked(selected))){say('Completa i passaggi e scegli una stanza disponibile prima di entrare.');return;}
     const room=roomUnlocked(selected)?selected:assets.rooms[0];
+    let authorizedAsset=null;
+    if(MFP.real){
+      doorRunning=true;say('Verifica dell’accesso alla stanza…');
+      try{authorizedAsset=await MFP.api('room',{roomId:room.id});}
+      catch(error){doorRunning=false;say(error.message);return;}
+    }
     doorRunning=true;entryFocus=document.activeElement;
     const controller=new AbortController();entryAbort=controller;const signal=controller.signal;
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -92,6 +107,12 @@
         const frame=document.createElement('iframe');frame.className='mfp-arrival-room';frame.title='Stanza '+room.name;frame.src=room.page;
         frame.addEventListener('load',()=>{try{frame.contentDocument.querySelectorAll('a').forEach(a=>a.target='_top');}catch{}});
         arrival.append(frame);arrival.classList.add('has-room-page');
+      }
+      if(authorizedAsset?.trainingUrl){
+        const training=document.createElement('video');training.className='mfp-private-training';training.controls=true;training.playsInline=true;
+        training.src=authorizedAsset.trainingUrl;training.setAttribute('aria-label','Allenamento nella stanza '+room.name);
+        Object.assign(training.style,{position:'absolute',zIndex:4,left:'10%',top:'10%',width:'80%',height:'80%',background:'#000'});
+        arrival.append(training);
       }
       if(signal.aborted)return;
       body.scrollIntoView({behavior:'instant',block:'start'});
@@ -151,7 +172,18 @@
   });
   if(window.ResizeObserver)new ResizeObserver(()=>document.documentElement.style.setProperty('--mfp-controls-height',($('mfp-controls').offsetHeight+30)+'px')).observe($('mfp-controls'));
   const query=new URLSearchParams(location.search),incoming=assets.rooms.find(r=>r.id===query.get('stanza'));
+  window.addEventListener('mfp-state',()=>{state=MFP.read();if(!state.paid)closeDoor();render();});
   render();
+  if(MFP.real&&query.get('pagamento')==='verifica'){
+    say('Verifico la conferma del pagamento…');
+    for(let attempt=0;attempt<4&&!state.paid;attempt++){
+      if(attempt)await new Promise(resolve=>setTimeout(resolve,2000));
+      state=await MFP.refresh();
+    }
+    render();
+    if(!state.paid)say(MFP.problem||'Pagamento ancora in verifica. Attendi e ricarica la pagina: l’accesso si attiva dopo la conferma di Stripe.');
+    history.replaceState(null,'',location.pathname);
+  }
   if(incoming&&roomUnlocked(incoming)&&state.paid&&state.profile){
     state.room=incoming.id;save();history.replaceState(null,'',location.pathname);render();
     requestAnimationFrame(()=>animateDoor(false));
